@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <title>Weather Physics and Patterns</title>
+  <meta charset="utf-8">
+  <script>
+    function box(el) {
+      return el.getBoundingClientRect();
+    }
+    function x(el) {
+      return box(el).left;
+    }
+    function y(el) {
+      return box(el).top;
+    }
+    function width(el) {
+      return box(el).width;
+    }
+    function height(el) {
+      return box(el).height;
+    }
+    function t(el) {
+      return box(el).top;
+    }
+    function b(el) {
+      return box(el).bottom;
+    }
+    function l(el) {
+      return box(el).left;
+    }
+    function r(el) {
+      return box(el).right;
+    }
+
+    var scrollwidth;
+    var jumptog = false;
+    //Push an array containing miss element then function
+    //  If function returns false, entry stays
+    var outclicks = [];
+    function outclickpush(elem, func) {
+      outclicks.push([elem, func]);
+    }
+
+    window.addEventListener('load', function() {
+      document.body.style.overflow = 'hidden';
+      scrollwidth = width(document.body);
+      document.body.style.overflow = 'initial';
+      scrollwidth -= width(document.body);
+      jumpto.onclick = function(e) {
+        if(e.clientY - y(jumpto) <= 24) {
+          if(jumptog) {
+            //put it back
+            jumpto.style.height = '24px';
+            jumpto.className = 'a';
+            setTimeout(function() {jumpto.className = '';}, 150);
+            outclicks.pop();
+            jumptog = false;
+          } else {
+            //expand it
+            jumpto.style.height = jumpcont.clientHeight + 'px';
+            jumpto.className = 'a b';
+            setTimeout(function() {jumpto.className = 'b';}, 150);
+            jumptog = true;
+            outclickpush(jumpto, function(e) {
+              jumpto.style.height = '24px';
+              jumpto.className = 'sel o';
+              jumptog = false;
+              e.stopImmediatePropagation();
+            });
+          }
+        } else if(e.target.getAttribute('marker') !== null) {
+          window.scrollTo(0, document.getElementById(e.target.getAttribute('marker')).offsetTop - navh());
+          jumpto.style.height = '24px';
+          jumpto.className = '';
+          outclicks.pop();
+          jumptog = false;
+        }
+        e.stopPropagation();
+      };
+      var max = 0;
+      var ems = document.getElementsByClassName('g');
+      for(var i=0; i<ems.length; i++) {
+        if(width(ems[i])>max)max=width(ems[i]);
+      }
+      jumpcont.style.width = max + 27 + 'px';
+      (document.onscroll = function(e) {
+        var ty = pageYOffset / (height(document.body) + navh() - window.innerHeight) * (window.innerHeight - navh()) + navh();
+        var min = height(document.body) + navh();
+        var ems = document.getElementsByClassName('anchor');
+        var tmp;
+        var it;
+        for(var i=0; i<ems.length; i++) {
+          tmp = Math.abs(ty - y(ems[i]));
+          if(tmp < min) {
+            min = tmp;
+            it = ems[i];
+          }
+        }
+        jumpdisp.textContent = it.textContent;
+      })();
+      (window.onresize = function() {
+        page.style.marginTop = (navh()) + 'px';
+        jumpto.parentNode.parentNode.style.marginRight = width(author) + 25 + 'px';
+        var ems = document.getElementsByClassName('image');
+        var w = width(document.body);
+        for(var i=0; i<ems.length; i++) {
+          if(ems[i].getAttribute('h') !== null){
+            ems[i].style.width = '';
+            ems[i].style.height = ems[i].getAttribute('h');
+          }
+          if(ems[i].offsetWidth + 54 >= w) {
+            ems[i].style.width = '100%';
+            ems[i].setAttribute('h', ems[i].style.height);
+            ems[i].style.height = '';
+          } else if(ems[i].getAttribute('h') !== null) {
+            ems[i].removeAttribute('h');
+          }
+        }
+      })();
+      var imgfunc = function (e) {
+        var f = document.getElementById('floater');
+        var bg = document.getElementById('bg');
+        var b = box(e.target);
+        f.style.left = b.left + 'px';
+        f.style.top = b.top + 'px';
+        f.style.width = b.width + 'px';
+        f.style.height = b.height + 'px';
+        f.style.display = 'block';
+        f.src = e.target.src;
+        e.target.style.visibility = 'hidden';
+        bg.style.display = 'block';
+        f.className = 'moving';
+        document.body.style.overflow = 'hidden';
+        document.body.style.marginRight = scrollwidth + 'px';
+        nav.children[5].style.right = scrollwidth + 20 + 'px';
+        setTimeout(function() {
+          var t = performance.now();
+          bg.style.opacity = '1';
+          if(b.width/b.height < window.innerWidth/window.innerHeight) {
+            f.style.top = '0';
+            f.style.height = '100%';
+            f.style.left = (window.innerWidth - window.innerHeight/b.height*b.width)/2 + 'px';
+            f.style.width = (window.innerHeight/b.height*b.width) + 'px';
+          } else {
+            f.style.left = '0';
+            f.style.width = '100%';
+            f.style.top = (window.innerHeight - window.innerWidth/b.width*b.height)/2 + 'px';
+            f.style.height = (window.innerWidth/b.width*b.height) + 'px';
+          }
+          var c = document.onclick;
+          document.onclick = function() {
+            b = box(e.target);
+            bg.style.opacity = '0';
+            f.style.left = b.left + 'px';
+            f.style.top = b.top + 'px';
+            f.style.width = b.width + 'px';
+            f.style.height = b.height + 'px';
+            document.onclick = c;
+            setTimeout(function() {
+              e.target.style.visibility = '';
+              bg.style.display = 'none';
+              f.style.display = 'none';
+              f.className = '';
+              document.body.style.overflow = '';
+              document.body.style.marginRight = '';
+              nav.children[5].style.right = '';
+            }, performance.now() - t > 600 ? 600 : performance.now() - t);
+          };
+        }, 20); //Run this a frame later after the position and class effects have taken place
+      };
+      var imgs = document.getElementsByClassName('image');
+      for(var i=0; i<imgs.length; i++) {
+        imgs[i].onclick = imgfunc;
+      }
+    });
+
+    function navh() {
+      return height(nav) + 5;
+    }
+
+    document.addEventListener('click', function(e) {
+      var miss;
+      var cont = false;
+      var tmp = [];
+      do {
+        miss = outclicks.pop();
+        if(miss === undefined) break;
+        if(typeof miss == 'object' && typeof miss[0] == 'object' && typeof miss[1] == 'function') {
+          if(e.target === miss[0]) {
+            tmp.push(miss);
+          } else {
+            if(miss[1](e) === false) tmp.push(miss);
+            else cont = true;
+          }
+        }
+      } while(!cont);
+      for(var i=0; i<tmp.length; i++) {
+        outclicks.push(tmp.pop());
+      }
+    });
+  </script>
+  <style>
+    /*
+    Colors:
+    Bright: #8728ef
+    Toned Down: #7c31b5
+    Toned Down Hover: #e1cdfb
+    */
+
+    /*Body*/
+    body {
+      padding: 0;
+      margin: 0;
+      border: 0;
+      font-family: Calibri;
+    }
+    body:before {
+      content: "";
+      position: fixed;
+      top: -10px;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,.8);
+      z-index: 100;
+    }
+    body:after {
+      content: "";
+      position: fixed;
+      bottom: -10px;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,.8);
+      z-index: 100;
+    }
+    p {
+      font-size: 18px;
+      text-indent: 36px;
+    }
+    a {
+      text-decoration: none;
+      color: #7c31b5;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /*Global*/
+    .r {float: right;}              /*Float right*/
+    .l {float: left;}               /*Float left*/
+    .u {                            /*Unselectable*/
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .vl {                           /*Vertical line*/
+      height: 80%;
+      margin: 0 16px;
+      transform: translate(0,10%);
+      width: 1px;
+      background-color: black;
+      border-radius: 100px;
+    }
+      .vl.b {                         /*Bold*/
+        width: 2px;
+      }
+      .vl.w {                         /*White*/
+        background-color: white;
+      }
+      .vl.f {                         /*Full*/
+        height: 100%;
+        transform: translate(0,0);
+      }
+      .vl.s {                         /*Slim margins*/
+        margin: 0 4px;
+      }
+    .hl {                           /*Horizontal line*/
+      height: 1px;
+      width: 80%;
+      margin: 8px 0;
+      transform: translate(10%,0);
+      background-color: black;
+    }
+      .hl.b {                         /*Bold*/
+        height: 2px;
+      }
+      .hl.w {                         /*White*/
+        background-color: white;
+      }
+      .hl.f {                         /*Full*/
+        width: 100%;
+        transform: translate(0,0);
+      }
+      .hl.s {                         /*Slim margins*/
+        margin: 4px 0;
+      }
+    .sel {cursor: pointer;}         /*Link cursor*/
+    .cur {cursor: default;}         /*Arrow cursor*/
+    .oh {overflow: hidden;}         /*Hide overflow*/
+    .anchor {                       /*For an achor point*/
+      height: 0px;
+      overflow: hidden;
+    }
+    h1 {
+      text-align: center;
+      color: #7c31b5;
+    }
+    ul {
+      list-style-image: url(bullet.svg);
+    }
+    .topic {
+      margin: 10px;
+      border: 2px solid #e9cdfb;
+      background-color: #f7ecff;
+      padding: 0 15px;
+      overflow: auto;
+    }
+    .image {
+      cursor: pointer;
+      transition:box-shadow .3s ease-out;
+      z-index: 1;
+      position: relative;
+      background-color: white;
+      margin-bottom: 5px;
+    }
+    .image.r {
+      margin-left: 10px;
+      float: right;
+    }
+    .image.l {
+      margin-right: 10px;
+      float: left;
+    }
+    .image.n {
+      clear: both;
+    }
+    .image:hover {
+      box-shadow: 0 0 20px rgba(1,1,1,.4);
+      z-index: 2;
+    }
+    #floater {
+      position: fixed;
+      display: none;
+      z-index: 99;
+      background-color: white;
+    }
+    #floater.moving {
+      transition: top .6s ease, left .6s ease, width .6s ease, height .6s ease;
+    }
+
+    /*Specific*/
+    #nav {
+      background-color: #7c31b5;
+      width: 100%;
+      position: fixed;
+      -webkit-flex-direction: row;
+      flex-direction: row;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      top: 0;
+      left: 0;
+      color: white;
+      padding: 5px 7px 0;
+      z-index: 90;
+    }
+      #nav > div {
+        display: block;
+        line-height: 40px;
+        white-space: nowrap;
+      }
+      #nav > .a {
+        font-size: 36px;
+        transform: translate(0,-3px);
+      }
+      #nav > .b {
+        font-size: 24px;
+        display: -webkit-flex;
+        display: flex;
+      }
+      .c {
+        height: 24px;
+        overflow-y: visible;
+        margin: 8px;
+        margin-right: 0;
+      }
+      #jumpto {
+        box-sizing: border-box;
+        height: 24px;
+        overflow-y: hidden;
+        border:1px solid white;
+        background-color: #f7e7fb;
+        border-radius: 4px;
+        line-height: 1;
+        font-size: 20px;
+        color: black;
+        padding: 0 2px;
+        transition: height ease-out .2s, border ease-out .2s, transform .05s ease-out, box-shadow .1s ease-out;
+      }
+        #jumpto:hover:not(.b) {
+          transform: scale(1.02);
+        }
+        #jumpto:hover {
+          box-shadow: 0 0 20px rgba(1,1,1,.4);
+        }
+        #jumpto.a, #jumpto:active {
+          transform: scale(.97);
+        }
+        #jumpto .arrow path {
+          transform: scale(1);
+          transition: transform .2s ease-out;
+        }
+      #jumpto.b {
+        border-color: black;
+      }
+        #jumpto.b .arrow path {
+          transform: scale(1,-1) translate(0,-24px);
+        }
+      #jumpcont {
+        overflow-x: hidden;
+      }
+      #jumpdisp {
+        margin-left: 3px;
+        -webkit-flex: 1;
+        flex: 1;
+      }
+      #jumpdispcont {
+        display: -webkit-flex;
+        display: flex;
+        width: 100%;
+      }
+      #nav > .e {
+        -webkit-flex-grow: 1;
+        flex-grow: 1;
+      }
+      #nav > .f {
+        font-size: 24px;
+        position: absolute;
+        top: 5px;
+        right: 20px;
+      }
+      #nav .g {
+        padding: 4px 0;
+        margin-left: 3px;
+        cursor: pointer;
+      }
+        #nav .g:hover {
+          background-color: #eccdfb;
+        }
+      #nav .o:hover {
+        background-color: #ebcdfb;
+      }
+    #page {
+      margin-top: 63px;
+    }
+  </style>
+</head>
+<body>
+  <div id="bg" style="position: fixed; display: none; opacity: 0; background-color: black; width: 100%; height: 100%; z-index: 98; top: 0; left: 0; transition: opacity .6s ease-out;"></div>
+  <div id="nav" class="u cur">
+    <div class="a">Weather Physics and Patterns</div>
+    <div class="vl w b"></div>
+    <div class="b">Jump to:
+      <div class="c">
+        <div id="jumpto">
+          <div id="jumpcont">
+            <div id="jumpdispcont" class="o sel">
+              <div id="jumpdisp" role="d"></div>
+              <svg class="arrow" width="24" height="24">
+                <path style="fill:none;stroke:#7c31b5;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" d="m 4,8 8,8 8,-8"/>
+              </svg>
+            </div>
+            <div class="hl f s" style="margin-top: 0;"></div>
+            <div class="g" marker="cause">What Causes Weather?</div>
+            <div class="g" marker="clouds">Types of Weather</div>
+            <div class="g" marker="sources">Sources</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="e"></div>
+    <div class="vl w b"></div>
+    <div class="f" id="author">By Dakota Sullivan</div>
+  </div>
+  <div id="page">
+    <!-- <div class="topic"><h1>Title</h1><img class="image" src="httpsrc" style="height: xpx" /><p>Paragraph Content</p></div> -->
+    <div id="cause" class="anchor">What Causes Weather?</div>
+    <div class="topic">
+      <h1>What Causes Weather?</h1>
+      <img class="image r" src="https://i6jcwg.dm2302.livefilestore.com/y2p3T-0KbmSfL0U7z1ATz2QLCS5znDMpR5hmfpkOC9f5YW0suee-k5A71vcALY2l8nBpd4KSUIWgKhZDars9JIsO6Wo5AbCzTFx_Rn9nok4S7fYyDmgh2HNILZD_RpUS3d5a8kktP0ENI4-iRpqTQqcjfwg5RveE2-0EIrGZj4h8EI/IMG_20150506_182310.jpg" style="height: 280px;">
+      <p>
+        In short, <strong>pressure changes</strong>.
+        When there is a difference in pressure, the air will flow from high pressure areas to lower pressure areas, and the more compact the pressure change is, the more wind there is.
+        Pressure changes are caused by our main source of energy: <strong>The Sun</strong>.
+        The Sun heats the Earth unevenly by nature, scince the Earth rotates, revoles, and precesses.
+        Also, because the Earth is a sphere, the rays of light per area of the surface decreases as you move away from the direct light of the sun.
+        And, really, the landscape and existing clouds have an impact on the heating of the surface.
+      </p>
+    <p>
+      So the uneven heating creates wind, but what creates the clouds?
+      Clouds are made of water vapor, so there has to be enough water and energy to create them.
+      The temperature at which clouds will form with the current humidity is called the <strong>Dew Point</strong>.
+      When the Dew Point is reached, dew will also form on grass and other things.
+    </p>
+    <p>
+      The Dew Point is based on the <strong>Relative Humidity</strong>.
+      When the Relative Humidity reaches 100%, the Dew Point is the current temperature.
+      Relative Humidity is calculated as the amount of water in a specific quantity of air, or the <strong>Partial Pressure</strong> of the water vapor, divided by the total amount of water vapor the air can hold, basically the maxixmum possible humidity or sometimes called "<strong>Equilibrium Vapor Pressure</strong>."
+      More specifically, the Equilibrium Vapor Pressure is the Partial Pressure of the water vapor when the water is evaporating as fast as it is condensing.
+    </p>
+    <p>
+      To understand exactly how clouds form, you need to understand vaporization.
+      In a body of water, the molecules do not have the exact same energy, and collide in ways that may give one molecule more energy than the other.
+      When a molecule reaches enough energy to escape intermolecular bonds it will vaporize and become gas.
+      The difference between boiling and evaporation is officially the average temperature of the object: if the temperature is at or above the boiling point, the substance is boiling, else it is evaporating.
+      However, it is easier to say that boiling is where the vapor forms within the substance and evaporation is where it forms at the surface.
+    </p>
+    <p>
+      So vaporization, usually evaporation specifically, puts water into the air, changing the humidity, and when the relative humidity reaches 100%, clouds form, and above 100%, water falls to the ground in the form of precipitation.
+      The Sun heats up the water to cause the evaporation and the land to create wind, creating all of the stoms we see today.
+    </p>
+    </div>
+    <div class="topic">
+      <div id="clouds" class="anchor">Types of Clouds</div>
+      <h1>Types of Weather</h1>
+      <p>
+        There are four different basic classifications for clouds based on the height the occur: High, Mid, Low, and Vertical (Low to Mid).
+        The higher clouds are the coldest and are usually made of ice crystals or supercooled water droplets.
+        Usually these higher clouds are warning signs of a storm to come.
+        The mid clouds may be either water droplets or ice crystals depending on the temperature, and may bring light precipitation.
+        These usually form along a frontal system, and may form into Nimbostratus clouds wich can absolutely pour.
+        The low clouds are usually comprised of water droplets and may precipitate, but only lightly.
+        The last and largest clouds, the vertical, or Cumuliform, are clouds with upward-growing vertical development that if continued long enough will form thunderstorms, rain, hail, and or tornadoes.
+      </p>
+      <h2>Cloud Genuses</h2>
+      <ul>
+        <li>
+          <h3>High</h3>
+          <ul>
+            <li>Cirrus</li>
+            <li>Cirrocumulus</li>
+            <li>Cirrostratus</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Mid</h3>
+          <ul>
+            <li>Altocumulus</li>
+            <li>Altostratus</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Low</h3>
+          <ul>
+            <li>Stratocumulus</li>
+            <li>Strato</li>
+            <li>Cumulus (little vertical extent)</li>
+          </ul>
+        </li>
+        <li>
+          <h3>Vertical</h3>
+          <ul>
+            <li>Nimbostratus (moderate or deep vertical)</li>
+            <li>Cumulus (moderate vertical)</li>
+            <li>Cumulus (towering vertical)</li>
+            <li>Cumulonimbus (towering vertical)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="topic">
+      <div id="precips" class="anchor">Types of Precipitation</div>
+      <h1>Types of Precipitation</h1>
+      <img src="http://upload.wikimedia.org/wikipedia/commons/d/d5/Hagelkorn_mit_Anlagerungsschichten.jpg" style="height: 180px;" class="image r">
+      <img src="http://upload.wikimedia.org/wikipedia/commons/8/88/Snowflake_300um_LTSEM%2C_13368.jpg" style="height: 170px;" class="image r">
+      <p>
+        There are four basic types of precipitation: Rain, Snow, Hail, and Graupel.
+        Rain is obviously liquid water that has condensed from a cloud and fallen.
+        Snow is also obviously liquid water that has frozen and crystallized into ice forming snow flakes.
+        Hail however, is similar to a snow flake, but the ice does not crystallize in the same way and an updraft keeps the hail pellets suspended in air to collect more until the wind cannot hold it up anymore, so it falls.
+        And Graupel is even more crazy, it starts out as a snow flake, but supercooled water droplets attach and crystalize, creating something like a soft hail with a starchy texture.
+      </p>
+    </div>
+    <div class="topic">
+      <div id="sources" class="anchor">Sources</div>
+      <h1>Sources</h1>
+      <ul>
+        <li>Wikipedia</li>
+      </ul>
+      <h1>Images</h1>
+      <ul>
+        <li>Clouds above black ground: <a href="https://onedrive.live.com/redir?resid=cf0ab54e27a0eb0e!17333&authkey=!AFy6CZBff2yCmfM&v=3&ithint=photo%2cjpg">My own personal image</a></li>
+        <li>Hail: <a href="http://commons.wikimedia.org/wiki/File:Hagelkorn_mit_Anlagerungsschichten.jpg">Hagelkorn mit Anlagerungsschichten.jpg</a></li>
+        <li>Graupel: <a href="http://commons.wikimedia.org/wiki/File:Snowflake_300um_LTSEM,_13368.jpg">Snowflake_300um_LTSEM,_13368.jpg</a></li>
+      </ul>
+    </div>
+  </div>
+  <img id="floater"/>
+</body>
+</html>
