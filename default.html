@@ -97,6 +97,7 @@
             it = ems[i];
           }
         }
+        it = it | ems[0];
         jumpdisp.textContent = it.textContent;
       })();
       (window.onresize = function() {
