@@ -91,8 +91,8 @@
         var tmp;
         var it;
         for(var i=0; i<ems.length; i++) {
-          tmp = Math.abs(ty - y(ems[i]));
-          if(tmp < min) {
+          tmp = ty - y(ems[i]);
+          if(tmp < min && tmp >= 0) {
             min = tmp;
             it = ems[i];
           }
@@ -477,6 +477,8 @@
             <div class="hl f s" style="margin-top: 0;"></div>
             <div class="g" marker="cause">What Causes Weather?</div>
             <div class="g" marker="clouds">Types of Weather</div>
+            <div class="g" marker="precips">Types of Precipitation</div>
+            <div class="g" marker="organization">How to Sort Weather</div>
             <div class="g" marker="sources">Sources</div>
           </div>
         </div>
@@ -491,7 +493,7 @@
     <div id="cause" class="anchor">What Causes Weather?</div>
     <div class="topic">
       <h1>What Causes Weather?</h1>
-      <img class="image r" src="https://dm2302files.storage.live.com/y2pp8tl_U5RqNHcn-kLGN6c-ZEtVhqqqpNyiHPGfBsly9sjbVqLqtv_jIZovsq5jxU3sjuT8IfJl0CUvhnk8DHixNjIlVzaELI5fLVrXOhstrj0GMZ9W6_kwN9bK_BPaG3G/IMG_20150506_182310.jpg?psid=1" style="height: 280px;">
+      <img class="image r" src="https://www.dropbox.com/s/ljq931ngu3qshwv/IMG_20150506_182310%5B1%5D.jpg?raw=1" style="height: 280px;">
       <p>
         In short, <strong>pressure changes</strong>.
         When there is a difference in pressure, the air will flow from high pressure areas to lower pressure areas, and the more compact the pressure change is, the more wind there is.
@@ -540,6 +542,7 @@
       <h2>Cloud Genuses</h2>
       <ul>
         <li>
+          <img src="https://www.dropbox.com/s/m8tbr9lstcbc1nb/IMG_20150523_191047.jpg?raw=1" class="image r" style="height: 150px;">
           <h3>High</h3>
           <ul>
             <li>Cirrus</li>
@@ -548,6 +551,7 @@
           </ul>
         </li>
         <li>
+          <img src="https://www.dropbox.com/s/4zmzzr2xbrv96wq/IMG_20150526_150947.jpg?raw=1" class="image r n" style="height: 150px;">
           <h3>Mid</h3>
           <ul>
             <li>Altocumulus</li>
@@ -555,6 +559,7 @@
           </ul>
         </li>
         <li>
+          <img src="https://www.dropbox.com/s/mkmqkdmxn10ucq6/IMG_20150526_150937.jpg?raw=1" class="image r n" style="height: 150px;">
           <h3>Low</h3>
           <ul>
             <li>Stratocumulus</li>
@@ -563,6 +568,7 @@
           </ul>
         </li>
         <li>
+          <img src="https://www.dropbox.com/s/vv1h5s0w9eynf3t/IMG_20150526_191726.jpg?raw=1" class="image r n" style="height: 150px;">
           <h3>Vertical</h3>
           <ul>
             <li>Nimbostratus (moderate or deep vertical)</li>
@@ -587,18 +593,33 @@
       </p>
     </div>
     <div class="topic">
+      <div id="organization" class="anchor">How to Sort Weather</div>
+      <h1>How to Sort Weather</h1>
+      <img src="https://www.dropbox.com/s/pihynmytcocyyek/Isotherm.png?raw=1" class="image l" style="height: 270px;">
+      <p>
+        Weather is usually predicted and sorted by fronts.
+        A front is a separation of two masses of air of different densities, or basically walls separating high pressure air and low pressure air.
+        A <strong>Cold Front</strong> (high pressure) usually brings storms, while a <strong>Warm Front</strong> usually brings nice weather and clear skies.
+        There is also what is called an <strong>Occluded Front</strong>, which is when a Cold Front takes over a Warm Front, usually bringing drier weather, and a <strong>Stationary Front</strong>, where a Cold Front borders a Warm Front so neither move, usually resulting in prolonged precipitation from the Cold Front.
+      </p>
+      <p>
+        There are also what are called <strong>Isotherms</strong> and <strong>Isobars</strong> based on temperature and bars or atmospheres, respectively.
+        These simply take data from weather stations, interpolate (guess) the values in between to create a gradient, and simplify that gradient to a limited amount of colors based on steady intervals.
+        For example, the photo to the left is a computer-generated Isotherm with undefined intervals overlaying Colorado.
+        This type of graphing used to be done by hand, however, now supercomputers do these calculations constantly.
+      </p>
+    </div>
+    <div class="topic">
       <div id="sources" class="anchor">Sources</div>
       <h1>Sources</h1>
       <ul>
-        <li>Wikipedia</li>
+        <li>Wikipedia (<a href="http://en.wikipedia.org/wiki/Weather_front">Weather Front</a>, <a href="http://en.wikipedia.org/wiki/List_of_cloud_types">List of Cloud Types</a>)</li>
+        <li>Class</li>
       </ul>
       <h1>Images</h1>
       <ul>
-        <li>Clouds above black ground: <a href="https://onedrive.live.com/redir?resid=cf0ab54e27a0eb0e!17333&authkey=!AFy6CZBff2yCmfM&v=3&ithint=photo%2cjpg">My own personal image</a></li>
-        <li>Cirrocumulus Stratiformis: <a href="http://commons.wikimedia.org/wiki/File:Cirrocumulus_in_Hong_Kong.jpg">Cirrocumulus in Hong Kong.jpg</a></li>
-        <li>Altocumulus Lenticularis Duplicatus: <a href="http://commons.wikimedia.org/wiki/File:Saucer_cloud_over_Campbell_Mesa,_AZ.jpg">Saucer cloud over Campbell Mesa, AZ.jpg</a></li>
-        <li>Stratocumulus Cumulogenitus with higher layer of Altocumulus Stratiformis: <a href="http://commons.wikimedia.org/wiki/File:Clouds_CL4.jpg">Clouds CL4.jpg</a></li>
-        <li>Cumulus Congestus: <a href="http://commons.wikimedia.org/wiki/File:Cumulus_congestus_cloud.jpg">Cumulus congestus cloud.jpg</a></li>
+        <li>First five cloud pictures: <a href="https://onedrive.live.com/redir?resid=CF0AB54E27A0EB0E!17493&authkey=!APc3UaJuuF8lick&ithint=folder%2c">My own personal image</a></li>
+        <li>WunderMap Isotherm: <a href="https://onedrive.live.com/redir?resid=CF0AB54E27A0EB0E!17496&authkey=!ABXYtvs-6aek6bE&v=3&ithint=photo%2cpng">My own personal image</a></li>
         <li>Hail: <a href="http://commons.wikimedia.org/wiki/File:Hagelkorn_mit_Anlagerungsschichten.jpg">Hagelkorn_mit_Anlagerungsschichten.jpg</a></li>
         <li>Graupel: <a href="http://commons.wikimedia.org/wiki/File:Snowflake_300um_LTSEM,_13368.jpg">Snowflake_300um_LTSEM,_13368.jpg</a></li>
       </ul>
